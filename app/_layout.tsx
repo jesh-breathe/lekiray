@@ -1,16 +1,14 @@
-import TabBar from "@/components/TabBar";
-import { Tabs } from "expo-router";
+import { Stack } from "expo-router";
+import { ClerkProvider } from "@clerk/clerk-expo";
+import { tokenCache } from "@clerk/clerk-expo/token-cache";
 
 export default function RootLayout() {
   return (
-    <Tabs tabBar={(props) => <TabBar {...props} />}>
-      <Tabs.Screen
-        name="index"
-        options={{ title: "Explore", headerShown: false }}
-      />
-      <Tabs.Screen name="map" options={{ title: "Map" }} />
-      <Tabs.Screen name="wishlist" options={{ title: "Wishlist" }} />
-      <Tabs.Screen name="profile" options={{ title: "Profile" }} />
-    </Tabs>
+    <ClerkProvider tokenCache={tokenCache}>
+      <Stack>
+        <Stack.Screen name="(onboarding)" options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      </Stack>
+    </ClerkProvider>
   );
 }

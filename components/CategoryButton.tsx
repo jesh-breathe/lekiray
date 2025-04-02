@@ -1,30 +1,31 @@
 import React from "react";
-import {
-  StyleSheet,
-  View,
-  Button,
-  GestureResponderEvent,
-  Alert,
-} from "react-native";
+import { StyleSheet, Text, TouchableOpacity } from "react-native";
 
-const CategoryButton = ({ title }) => {
-  function alert() {}
-
+const CategoryButton = ({ title, selected, onPress }) => {
   return (
-    <View style={styles.button}>
-      <Button
-        onPress={alert}
-        title={title}
-        color="#2D2D2D"
-        accessibilityLabel="Learn more about this purple button"
-      />
-    </View>
+    <TouchableOpacity
+      onPress={onPress}
+      style={[styles.button, { backgroundColor: selected ? "red" : "#2D2D2D" }]}
+    >
+      <Text style={[styles.buttonText, { color: "white" }]}>{title}</Text>
+    </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   button: {
     width: 80,
+    padding: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "#2D2D2D",
+    marginHorizontal: 5,
+  },
+  buttonText: {
+    color: "white",
+    fontWeight: "bold",
   },
 });
 

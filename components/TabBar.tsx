@@ -4,27 +4,33 @@ import React from "react";
 import { StyleSheet, View, Text } from "react-native";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import { FontAwesome6 } from "@expo/vector-icons";
 
 const TabBar = ({ state, descriptors, navigation }) => {
   const primary = "#CD2427";
   const grey = "#757575";
 
-  const icons = {
-    index: (props) => (
-      <FontAwesome5 name="compass" size={28} color={grey} {...props} />
+  const icons: Record<
+    "explore" | "map" | "wishlist" | "profile",
+    (props: any) => JSX.Element
+  > = {
+    explore: (props) => (
+      <FontAwesome5 name="compass" size={24} color={grey} {...props} />
     ),
     map: (props) => (
-      <FontAwesome5 name="map-marker-alt" size={28} color={grey} {...props} />
+      <FontAwesome5 name="map-marker-alt" size={24} color={grey} {...props} />
     ),
     wishlist: (props) => (
-      <AntDesign name="heart" size={28} color={grey} {...props} />
+      <FontAwesome6 name="list" size={24} color={grey} {...props} />
     ),
     profile: (props) => (
-      <FontAwesome5 name="user-alt" size={28} color={grey} {...props} />
+      <FontAwesome5 name="user-alt" size={24} color={grey} {...props} />
     ),
   };
+
   const { colors } = useTheme();
   const { buildHref } = useLinkBuilder();
+
   return (
     <View
       style={{
@@ -36,73 +42,90 @@ const TabBar = ({ state, descriptors, navigation }) => {
         backgroundColor: "#fff",
         marginHorizontal: 10,
         paddingHorizontal: 10,
-        paddingVertical: 15,
-        borderRadius: 40,
+        paddingVertical: 10,
+        borderRadius: 10,
         shadowColor: "black",
         elevation: 3,
       }}
     >
-      {state.routes.map((route, index) => {
-        const { options } = descriptors[route.key];
-        const label =
-          options.tabBarLabel !== undefined
-            ? options.tabBarLabel
-            : options.title !== undefined
-            ? options.title
-            : route.name;
-        console.log(route.name);
-        if (["_sitemap", "+not-found"].includes(route.name)) return null;
+      {state.routes.map(
+        (
+          route: {
+            key: string | number;
+            name: string;
+            params: object | undefined;
+          },
+          index: React.Key | null | undefined
+        ) => {
+          const { options } = descriptors[route.key];
+          const label =
+            options.tabBarLabel !== undefined
+              ? options.tabBarLabel
+              : options.title !== undefined
+              ? options.title
+              : route.name;
 
-        const isFocused = state.index === index;
+          if (["_sitemap", "+not-found"].includes(route.name)) return null;
 
-        const onPress = () => {
-          const event = navigation.emit({
-            type: "tabPress",
-            target: route.key,
-            canPreventDefault: true,
-          });
+          const isFocused = state.index === index;
 
-          if (!isFocused && !event.defaultPrevented) {
-            navigation.navigate(route.name, route.params);
-          }
-        };
+          const onPress = () => {
+            const event = navigation.emit({
+              type: "tabPress",
+              target: route.key,
+              canPreventDefault: true,
+            });
 
-        const onLongPress = () => {
-          navigation.emit({
-            type: "tabLongPress",
-            target: route.key,
-          });
-        };
+            if (!isFocused && !event.defaultPrevented) {
+              navigation.navigate(route.name, route.params);
+            }
+          };
 
-        return (
-          <PlatformPressable
-            pressColor="white"
-            pressOpacity={1}
-            key={index}
-            href={buildHref(route.name, route.params)}
-            accessibilityState={isFocused ? { selected: true } : {}}
-            accessibilityLabel={options.tabBarAccessibilityLabel}
-            testID={options.tabBarButtonTestID}
-            onPress={onPress}
-            onLongPress={onLongPress}
-            style={{
-              flex: 1,
-              justifyContent: "center",
-              alignItems: "center",
-              gap: 4,
-            }}
-          >
-            {icons[route.name]({
-              color: isFocused ? primary : grey,
-            })}
-            <Text
-              style={{ color: isFocused ? primary : colors.text, fontSize: 12 }}
+          const onLongPress = () => {
+            navigation.emit({
+              type: "tabLongPress",
+              target: route.key,
+            });
+          };
+
+          const IconComponent = (
+            Object.keys(icons) as Array<keyof typeof icons>
+          ).includes(route.name as keyof typeof icons)
+            ? icons[route.name as keyof typeof icons]
+            : null;
+          if (!IconComponent) return null;
+
+          return (
+            <PlatformPressable
+              pressColor="white"
+              pressOpacity={1}
+              key={index}
+              href={buildHref(route.name, route.params)}
+              accessibilityState={isFocused ? { selected: true } : {}}
+              accessibilityLabel={options.tabBarAccessibilityLabel}
+              testID={options.tabBarButtonTestID}
+              onPress={onPress}
+              onLongPress={onLongPress}
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                gap: 4,
+              }}
             >
-              {label}
-            </Text>
-          </PlatformPressable>
-        );
-      })}
+              <IconComponent color={isFocused ? primary : grey} />
+              <Text
+                style={{
+                  color: isFocused ? primary : colors.text,
+                  fontSize: 12,
+                }}
+              >
+                {label}
+              </Text>
+            </PlatformPressable>
+          );
+        }
+      )}
     </View>
   );
 };
