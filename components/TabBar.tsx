@@ -1,30 +1,30 @@
 import { PlatformPressable } from "@react-navigation/elements";
 import { useLinkBuilder, useTheme } from "@react-navigation/native";
 import React from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View } from "react-native";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import AntDesign from "@expo/vector-icons/AntDesign";
 import { FontAwesome6 } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 
 const TabBar = ({ state, descriptors, navigation }) => {
-  const primary = "#CD2427";
-  const grey = "#757575";
+  const primary = "#FF7700";
+  const grey = "#FFF";
 
   const icons: Record<
     "explore" | "map" | "wishlist" | "profile",
     (props: any) => JSX.Element
   > = {
     explore: (props) => (
-      <FontAwesome5 name="compass" size={24} color={grey} {...props} />
+      <Ionicons name="home" size={26} color={grey} {...props} />
     ),
     map: (props) => (
-      <FontAwesome5 name="map-marker-alt" size={24} color={grey} {...props} />
+      <FontAwesome5 name="map-marker-alt" size={26} color={grey} {...props} />
     ),
     wishlist: (props) => (
-      <FontAwesome6 name="list" size={24} color={grey} {...props} />
+      <FontAwesome6 name="list" size={26} color={grey} {...props} />
     ),
     profile: (props) => (
-      <FontAwesome5 name="user-alt" size={24} color={grey} {...props} />
+      <FontAwesome5 name="user-alt" size={26} color={grey} {...props} />
     ),
   };
 
@@ -39,10 +39,10 @@ const TabBar = ({ state, descriptors, navigation }) => {
         bottom: 20,
         justifyContent: "space-between",
         alignItems: "center",
-        backgroundColor: "#fff",
+        backgroundColor: "#333",
         marginHorizontal: 10,
         paddingHorizontal: 10,
-        paddingVertical: 10,
+        paddingVertical: 25,
         borderRadius: 10,
         shadowColor: "black",
         elevation: 3,
@@ -114,14 +114,24 @@ const TabBar = ({ state, descriptors, navigation }) => {
               }}
             >
               <IconComponent color={isFocused ? primary : grey} />
-              <Text
+              {/* <Text
                 style={{
                   color: isFocused ? primary : colors.text,
                   fontSize: 12,
                 }}
               >
                 {label}
-              </Text>
+              </Text> */}
+
+              <View
+                style={{
+                  display: isFocused ? "flex" : "none",
+                  width: 5,
+                  height: 5,
+                  backgroundColor: "#FF7700",
+                  borderRadius: "50%",
+                }}
+              ></View>
             </PlatformPressable>
           );
         }

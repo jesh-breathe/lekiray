@@ -7,11 +7,11 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
-  TextInput,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
+
 
 export const properties = [
   {
@@ -139,16 +139,37 @@ export const properties = [
 export default function Index() {
   const { user } = useUser();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [filteredProperties, setFilteredProperties] = useState(properties);
+  const handleCategoryPress = (category: string) => {
+    const isAll = category.toLowerCase() === "all";
+    const newCategory = isAll ? null : category;
+
+
+    setSelectedCategory(newCategory);
+    console.log(newCategory);
+
+    if (isAll) {
+      setFilteredProperties(properties);
+    } else {
+      const filtered = properties.filter(
+          (property) => property.category.toLowerCase() === newCategory?.toLowerCase()
+      );
+      setFilteredProperties(filtered);
+    }
+  };
+
+  console.log(user?.fullName);
   const router = useRouter();
 
-  const categories = ["Home-stays", "Guest-house", "Hotels", "Renovation"];
+  const categories = ["All", "Home-stays", "Guest-house", "Hotels", "Renovation"];
 
   return (
     <SafeAreaView style={styles.main}>
       <View>
         <SignedIn>
-          <Text>Hello {user?.emailAddresses[0].emailAddress}</Text>
+          <Text>Hello {user?.firstName}</Text>
         </SignedIn>
+        {/* TODO: What the Fuck this code is doing down there?*/}
         {/* <SignedOut>
           <Link href="/(auth)/sign-in">
             <Text>Sign in</Text>
@@ -157,32 +178,22 @@ export default function Index() {
             <Text>Sign up</Text>
           </Link>
         </SignedOut> */}
+        {/* TODO: Fuck, I hate myself*/}
       </View>
       <View style={styles.header}>
-        <View style={styles.profileContainer}>
-          <Image
-            style={styles.profileImage}
-            source={{ uri: "https://randomuser.me/api/portraits/men/2.jpg" }}
-          />
-          <Text style={styles.welcomeText}>Welcome</Text>
-          <Text style={styles.userName}>Ehi</Text>
+        <View style={styles.labelContainer}>
+          <View>
+            <Text>Welcome</Text>
+            <Text>{user?.fullName}</Text>
+          </View>
+          <Image source={{ uri: user?.imageUrl }} style={styles.profileImage} />
         </View>
-        <Ionicons name="notifications-outline" size={24} color="white" />
+        <View>
+          <Ionicons name="notifications-sharp" color="black" size={24} />
+        </View>
       </View>
-      <View style={styles.searchContainer}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search Destination"
-          placeholderTextColor="#ccc"
-        />
-        <Ionicons
-          name="search"
-          size={24}
-          color="white"
-          style={styles.searchIcon}
-        />
-      </View>
-      <View style={{ display: "flex", flexDirection: "row" }}>
+      <View></View>
+      <View style={styles.categoryButtonScrollViewContainer}>
         <ScrollView
           style={styles.categoryContainer}
           horizontal
@@ -191,17 +202,23 @@ export default function Index() {
           {categories.map((category) => (
             <TouchableOpacity
               key={category}
+              onPress={() => handleCategoryPress(category)}
               style={[
                 styles.categoryButton,
-                selectedCategory === category && styles.selectedCategory,
+                (selectedCategory === null && category === "All") ||
+                selectedCategory?.toLowerCase() === category.toLowerCase() ? styles.selectedCategory
+                    : null
               ]}
-              onPress={() => setSelectedCategory(category)}
             >
+
               <Text
-                style={[
-                  styles.categoryText,
-                  selectedCategory === category && styles.selectedCategoryText,
-                ]}
+                  style={[
+                        styles.categoryText,
+                        (selectedCategory === null && category === "All") ||
+                        selectedCategory?.toLowerCase() === category.toLowerCase()
+                            ? styles.selectedCategoryText
+                            : null,
+                      ]}
               >
                 {category}
               </Text>
@@ -214,7 +231,7 @@ export default function Index() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.imageContainer}>
-          {properties.map((property) => (
+          {filteredProperties.map((property) => (
             <TouchableOpacity
               key={property.id}
               onPress={() =>
@@ -223,6 +240,7 @@ export default function Index() {
                   params: { property: JSON.stringify(property) },
                 })
               }
+
               style={styles.propertyCard}
             >
               <Image style={styles.image} source={property.image} />
@@ -248,15 +266,11 @@ export default function Index() {
 
 const styles = StyleSheet.create({
   main: {
+    margin: 0,
     flex: 1,
     backgroundColor: "#0A3D62",
   },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 20,
-  },
+  header: {},
   profileContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -266,6 +280,13 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
     marginRight: 10,
+  },
+  categoryButtonScrollViewContainer: {
+    display: "flex",
+    flexDirection: "row",
+  },
+  labelContainer: {
+    display: 'flex',
   },
   welcomeText: {
     color: "white",
