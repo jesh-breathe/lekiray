@@ -40,9 +40,6 @@ const PropertyDetails = () => {
         </TouchableOpacity>
         <View style={styles.headerIcons}>
           <TouchableOpacity>
-            <Ionicons name="share-social-outline" size={24} color="white" />
-          </TouchableOpacity>
-          <TouchableOpacity>
             <Ionicons name="heart-outline" size={24} color="white" />
           </TouchableOpacity>
         </View>

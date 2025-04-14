@@ -9,9 +9,8 @@ import {
   Image,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { useRouter, Link } from "expo-router";
 import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
-
 
 export const properties = [
   {
@@ -144,7 +143,6 @@ export default function Index() {
     const isAll = category.toLowerCase() === "all";
     const newCategory = isAll ? null : category;
 
-
     setSelectedCategory(newCategory);
     console.log(newCategory);
 
@@ -152,16 +150,24 @@ export default function Index() {
       setFilteredProperties(properties);
     } else {
       const filtered = properties.filter(
-          (property) => property.category.toLowerCase() === newCategory?.toLowerCase()
+        (property) =>
+          property.category.toLowerCase() === newCategory?.toLowerCase()
       );
       setFilteredProperties(filtered);
     }
   };
 
   console.log(user?.fullName);
+  console.log(user?.imageUrl);
   const router = useRouter();
 
-  const categories = ["All", "Home-stays", "Guest-house", "Hotels", "Renovation"];
+  const categories = [
+    "All",
+    "Home-stays",
+    "Guest-house",
+    "Hotels",
+    "Renovation",
+  ];
 
   return (
     <SafeAreaView style={styles.main}>
@@ -206,19 +212,19 @@ export default function Index() {
               style={[
                 styles.categoryButton,
                 (selectedCategory === null && category === "All") ||
-                selectedCategory?.toLowerCase() === category.toLowerCase() ? styles.selectedCategory
-                    : null
+                selectedCategory?.toLowerCase() === category.toLowerCase()
+                  ? styles.selectedCategory
+                  : null,
               ]}
             >
-
               <Text
-                  style={[
-                        styles.categoryText,
-                        (selectedCategory === null && category === "All") ||
-                        selectedCategory?.toLowerCase() === category.toLowerCase()
-                            ? styles.selectedCategoryText
-                            : null,
-                      ]}
+                style={[
+                  styles.categoryText,
+                  (selectedCategory === null && category === "All") ||
+                  selectedCategory?.toLowerCase() === category.toLowerCase()
+                    ? styles.selectedCategoryText
+                    : null,
+                ]}
               >
                 {category}
               </Text>
@@ -236,11 +242,10 @@ export default function Index() {
               key={property.id}
               onPress={() =>
                 router.push({
-                  pathname: `/details/${property.id}`,
+                  pathname: `/(details)/${property.id}`,
                   params: { property: JSON.stringify(property) },
                 })
               }
-
               style={styles.propertyCard}
             >
               <Image style={styles.image} source={property.image} />
@@ -286,7 +291,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   labelContainer: {
-    display: 'flex',
+    display: "flex",
   },
   welcomeText: {
     color: "white",

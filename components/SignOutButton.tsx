@@ -10,7 +10,8 @@ export const SignOutButton = () => {
     try {
       await signOut();
       // Redirect to your desired page
-      Linking.openURL(Linking.createURL("/"));
+      Linking.openURL(Linking.createURL("/(onboarding)/welcome"));
+      console.log("Signed out");
     } catch (err) {
       // See https://clerk.com/docs/custom-flows/error-handling
       // for more info on error handling
@@ -20,7 +21,7 @@ export const SignOutButton = () => {
 
   return (
     <TouchableOpacity onPress={handleSignOut}>
-      <Text>Sign out</Text>
+      <Text>Signout</Text>
     </TouchableOpacity>
   );
 };

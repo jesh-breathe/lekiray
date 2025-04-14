@@ -9,8 +9,14 @@ export default function RootLayout() {
         options={{ title: "Explore", headerShown: false }}
       />
       <Tabs.Screen name="map" options={{ title: "Map" }} />
-      <Tabs.Screen name="wishlist" options={{ title: "Wishlist" }} />
-      <Tabs.Screen name="profile" options={{ title: "Profile" }} />
+      <Tabs.Screen
+        name="wishlist"
+        options={{ title: "Wishlist", headerShown: false }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{ title: "Profile", headerShown: false }}
+      />
     </Tabs>
   );
 }

@@ -140,6 +140,4 @@ const TabBar = ({ state, descriptors, navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({});
-
 export default TabBar;
