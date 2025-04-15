@@ -3,7 +3,6 @@ import {
   StyleSheet,
   View,
   Text,
-  SafeAreaView,
   ScrollView,
   TouchableOpacity,
   Image,
@@ -11,6 +10,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter, Link } from "expo-router";
 import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export const properties = [
   {
@@ -136,7 +136,7 @@ export const properties = [
 ];
 
 export default function Index() {
-  const { user } = useUser();
+  const { user, isLoaded, isSignedIn } = useUser();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [filteredProperties, setFilteredProperties] = useState(properties);
   const handleCategoryPress = (category: string) => {
@@ -159,6 +159,9 @@ export default function Index() {
 
   console.log(user?.fullName);
   console.log(user?.imageUrl);
+  if (!isLoaded) return null;
+  if (!isSignedIn) return <Text>Please sign in</Text>;
+  console.log(user?.id); // safe here
   const router = useRouter();
 
   const categories = [
@@ -171,33 +174,6 @@ export default function Index() {
 
   return (
     <SafeAreaView style={styles.main}>
-      <View>
-        <SignedIn>
-          <Text>Hello {user?.firstName}</Text>
-        </SignedIn>
-        {/* TODO: What the Fuck this code is doing down there?*/}
-        {/* <SignedOut>
-          <Link href="/(auth)/sign-in">
-            <Text>Sign in</Text>
-          </Link>
-          <Link href="/(auth)/sign-up">
-            <Text>Sign up</Text>
-          </Link>
-        </SignedOut> */}
-        {/* TODO: Fuck, I hate myself*/}
-      </View>
-      <View style={styles.header}>
-        <View style={styles.labelContainer}>
-          <View>
-            <Text>Welcome</Text>
-            <Text>{user?.fullName}</Text>
-          </View>
-          <Image source={{ uri: user?.imageUrl }} style={styles.profileImage} />
-        </View>
-        <View>
-          <Ionicons name="notifications-sharp" color="black" size={24} />
-        </View>
-      </View>
       <View></View>
       <View style={styles.categoryButtonScrollViewContainer}>
         <ScrollView
@@ -273,9 +249,9 @@ const styles = StyleSheet.create({
   main: {
     margin: 0,
     flex: 1,
-    backgroundColor: "#0A3D62",
+    backgroundColor: "#FFF",
   },
-  header: {},
+
   profileContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -293,15 +269,6 @@ const styles = StyleSheet.create({
   labelContainer: {
     display: "flex",
   },
-  welcomeText: {
-    color: "white",
-    fontSize: 16,
-  },
-  userName: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -315,9 +282,6 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16,
   },
-  searchIcon: {
-    marginLeft: 10,
-  },
   categoryContainer: {
     marginVertical: 20,
     height: 40,
@@ -328,13 +292,14 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   selectedCategory: {
-    backgroundColor: "#1B4F72",
+    backgroundColor: "black",
   },
   categoryText: {
-    color: "white",
+    color: "black",
     fontSize: 16,
   },
   selectedCategoryText: {
+    color: "white",
     fontWeight: "bold",
   },
   imageContainer: {

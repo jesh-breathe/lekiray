@@ -1,20 +1,20 @@
 import { PlatformPressable } from "@react-navigation/elements";
 import { useLinkBuilder, useTheme } from "@react-navigation/native";
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { Text, View } from "react-native";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 
 const TabBar = ({ state, descriptors, navigation }) => {
   const primary = "#FF7700";
-  const grey = "#FFF";
+  const grey = "#000";
 
   const icons: Record<
-    "explore" | "map" | "wishlist" | "profile",
+    "index" | "map" | "wishlist" | "profile",
     (props: any) => JSX.Element
   > = {
-    explore: (props) => (
+    index: (props) => (
       <Ionicons name="home" size={26} color={grey} {...props} />
     ),
     map: (props) => (
@@ -36,15 +36,11 @@ const TabBar = ({ state, descriptors, navigation }) => {
       style={{
         flexDirection: "row",
         position: "absolute",
-        bottom: 20,
+        bottom: 0,
         justifyContent: "space-between",
         alignItems: "center",
-        backgroundColor: "#333",
-        marginHorizontal: 10,
-        paddingHorizontal: 10,
-        paddingVertical: 25,
-        borderRadius: 10,
-        shadowColor: "black",
+        backgroundColor: "#FFF",
+        padding: 5,
         elevation: 3,
       }}
     >
@@ -114,24 +110,14 @@ const TabBar = ({ state, descriptors, navigation }) => {
               }}
             >
               <IconComponent color={isFocused ? primary : grey} />
-              {/* <Text
+              <Text
                 style={{
                   color: isFocused ? primary : colors.text,
                   fontSize: 12,
                 }}
               >
                 {label}
-              </Text> */}
-
-              <View
-                style={{
-                  display: isFocused ? "flex" : "none",
-                  width: 5,
-                  height: 5,
-                  backgroundColor: "#FF7700",
-                  borderRadius: "50%",
-                }}
-              ></View>
+              </Text>
             </PlatformPressable>
           );
         }

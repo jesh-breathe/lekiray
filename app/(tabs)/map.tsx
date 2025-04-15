@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import MapView, { Marker } from "react-native-maps";
-import { properties } from "@/app/(tabs)/explore";
+import { properties } from "@/app/(tabs)/index";
 
 const Map = () => {
   return (
