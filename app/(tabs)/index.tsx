@@ -1,168 +1,87 @@
-import React, { useState } from "react";
 import {
   StyleSheet,
   View,
   Text,
-  ScrollView,
   TouchableOpacity,
   Image,
+  ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter, Link } from "expo-router";
-import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
+import { useRouter } from "expo-router";
+import MapView from "react-native-maps";
 import { SafeAreaView } from "react-native-safe-area-context";
+import React, { useCallback, useState, useRef } from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 
 export const properties = [
   {
     id: 1,
     title: "El Naranjo, Guatemala",
-    description: "Added 11 weeks ago",
-    date: "Apr 1 – 6",
-    price: "$484 night",
+    location: "Addis Ababa, Ethiopia",
     category: "guest-house",
     image: require("@/assets/images/1.jpg"),
-    rating: 4,
-    location: "Addis Ababa, Ethiopia",
-    latitude: 9.01,
-    longitude: 38.76,
-    guests: 2,
-    bedrooms: 1,
-    beds: 1,
-    baths: 1,
-    host: {
-      name: "Michelle",
-      image: "https://via.placeholder.com/50",
-      hostingDuration: "1 month hosting",
-    },
-    reviews: 6,
-    rareFind: true,
+    price: "$484 night",
   },
   {
     id: 2,
     title: "Ethiopia",
-    description: "Added 5 weeks ago",
-    date: "May 1 – 6",
-    price: "$59.00 night",
-    image: require("@/assets/images/2.jpg"),
-    rating: 5,
-    category: "hotels",
     location: "Addis Ababa, Ethiopia",
-    latitude: 9.02,
-    longitude: 38.72,
-    guests: 3,
-    bedrooms: 2,
-    beds: 2,
-    baths: 1,
-    host: {
-      name: "John",
-      image: "https://via.placeholder.com/50",
-      hostingDuration: "2 months hosting",
-    },
-    reviews: 10,
-    rareFind: false,
+    category: "hotels",
+    image: require("@/assets/images/2.jpg"),
+    price: "$59.00 night",
   },
   {
     id: 3,
     title: "Kenya",
-    description: "Added 3 weeks ago",
-    date: "Jun 1 – 6",
-    category: "home-stays",
-    price: "$39.00 night",
-    image: require("@/assets/images/3.jpg"),
-    rating: 3,
     location: "Addis Ababa, Ethiopia",
-    latitude: 9.04,
-    longitude: 38.78,
-    guests: 4,
-    bedrooms: 3,
-    beds: 3,
-    baths: 2,
-    host: {
-      name: "Alice",
-      image: "https://via.placeholder.com/50",
-      hostingDuration: "3 months hosting",
-    },
-    reviews: 8,
-    rareFind: false,
+    category: "home-stays",
+    image: require("@/assets/images/3.jpg"),
+    price: "$39.00 night",
   },
   {
     id: 4,
     title: "Nigeria",
-    description: "Added 2 weeks ago",
-    date: "Jul 1 – 6",
-    category: "renovation",
-    price: "$29.00 night",
-    image: require("@/assets/images/4.jpg"),
-    rating: 4,
     location: "Addis Ababa, Ethiopia",
-    latitude: 9.05,
-    longitude: 38.7,
-    guests: 2,
-    bedrooms: 1,
-    beds: 1,
-    baths: 1,
-    host: {
-      name: "David",
-      image: "https://via.placeholder.com/50",
-      hostingDuration: "4 months hosting",
-    },
-    reviews: 5,
-    rareFind: true,
+    category: "renovation",
+    image: require("@/assets/images/4.jpg"),
+    price: "$29.00 night",
   },
   {
     id: 5,
     title: "South Africa",
-    description: "Added 1 week ago",
-    date: "Aug 1 – 6",
-    price: "$69.00 night",
+    location: "Addis Ababa, Ethiopia",
     category: "home-stays",
     image: require("@/assets/images/5.jpg"),
-    rating: 5,
-    location: "Addis Ababa, Ethiopia",
-    latitude: 9.06,
-    longitude: 38.75,
-    guests: 5,
-    bedrooms: 4,
-    beds: 4,
-    baths: 3,
-    host: {
-      name: "Emma",
-      image: "https://via.placeholder.com/50",
-      hostingDuration: "5 months hosting",
-    },
-    reviews: 12,
-    rareFind: false,
+    price: "$69.00 night",
   },
 ];
-
 export default function Index() {
-  const { user, isLoaded, isSignedIn } = useUser();
+  const bottomSheetRef = useRef<BottomSheet>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [filteredProperties, setFilteredProperties] = useState(properties);
+  const router = useRouter();
+
+  const handleSheetChanges = useCallback((index: number) => {
+    console.log("handleSheetChanges", index);
+  }, []);
+
   const handleCategoryPress = (category: string) => {
     const isAll = category.toLowerCase() === "all";
-    const newCategory = isAll ? null : category;
+    const isSelected =
+      selectedCategory?.toLowerCase() === category.toLowerCase();
 
-    setSelectedCategory(newCategory);
-    console.log(newCategory);
-
-    if (isAll) {
+    if (isAll || isSelected) {
+      setSelectedCategory(null);
       setFilteredProperties(properties);
     } else {
+      setSelectedCategory(category);
       const filtered = properties.filter(
-        (property) =>
-          property.category.toLowerCase() === newCategory?.toLowerCase()
+        (property) => property.category.toLowerCase() === category.toLowerCase()
       );
       setFilteredProperties(filtered);
     }
   };
-
-  console.log(user?.fullName);
-  console.log(user?.imageUrl);
-  if (!isLoaded) return null;
-  if (!isSignedIn) return <Text>Please sign in</Text>;
-  console.log(user?.id); // safe here
-  const router = useRouter();
 
   const categories = [
     "All",
@@ -173,123 +92,118 @@ export default function Index() {
   ];
 
   return (
-    <SafeAreaView style={styles.main}>
-      <View></View>
-      <View style={styles.categoryButtonScrollViewContainer}>
-        <ScrollView
-          style={styles.categoryContainer}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-        >
-          {categories.map((category) => (
-            <TouchableOpacity
-              key={category}
-              onPress={() => handleCategoryPress(category)}
-              style={[
-                styles.categoryButton,
-                (selectedCategory === null && category === "All") ||
-                selectedCategory?.toLowerCase() === category.toLowerCase()
-                  ? styles.selectedCategory
-                  : null,
-              ]}
-            >
-              <Text
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaView style={styles.main}>
+        {/* categories buttons */}
+        <View style={styles.categoryButtonScrollViewContainer}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {categories.map((category) => (
+              <TouchableOpacity
+                key={category}
+                onPress={() => handleCategoryPress(category)}
                 style={[
-                  styles.categoryText,
+                  styles.categoryButton,
                   (selectedCategory === null && category === "All") ||
                   selectedCategory?.toLowerCase() === category.toLowerCase()
-                    ? styles.selectedCategoryText
+                    ? styles.selectedCategory
                     : null,
-                ]}
-              >
-                {category}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </View>
-      <ScrollView
-        style={{ marginVertical: 15 }}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.imageContainer}>
-          {filteredProperties.map((property) => (
-            <TouchableOpacity
-              key={property.id}
-              onPress={() =>
-                router.push({
-                  pathname: `/(details)/${property.id}`,
-                  params: { property: JSON.stringify(property) },
-                })
-              }
-              style={styles.propertyCard}
-            >
-              <Image style={styles.image} source={property.image} />
-              <Ionicons
-                name="heart-outline"
-                size={24}
-                color="white"
-                style={styles.heartIcon}
-                onPress={() => console.log(property)}
-              />
-              <View style={styles.propertyInfo}>
-                <Text style={styles.propertyTitle}>{property.title}</Text>
-                <Text style={styles.propertyLocation}>{property.location}</Text>
-                <Text style={styles.propertyPrice}>{property.price}</Text>
-              </View>
-            </TouchableOpacity>
-          ))}
+                ]}>
+                <Text
+                  style={[
+                    styles.categoryText,
+                    (selectedCategory === null && category === "All") ||
+                    selectedCategory?.toLowerCase() === category.toLowerCase()
+                      ? styles.selectedCategoryText
+                      : null,
+                  ]}>
+                  {category}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
         </View>
-      </ScrollView>
-    </SafeAreaView>
+
+        {/**Map view */}
+        <MapView
+          style={{ flex: 1 }}
+          initialRegion={{
+            latitude: 9.03,
+            longitude: 38.74,
+            latitudeDelta: 0.1,
+            longitudeDelta: 0.1,
+          }}
+        />
+
+        <BottomSheet
+          topInset={100}
+          ref={bottomSheetRef}
+          onChange={handleSheetChanges}
+          snapPoints={["25%", "50%", "75%"]}
+          index={1} // Start at middle position
+          enablePanDownToClose={false}
+          enableHandlePanningGesture={true}
+          enableContentPanningGesture={true}
+          enableOverDrag={true}
+          activeOffsetY={[-10, 10]}
+          // Add these props to improve behavior
+          overDragResistanceFactor={0}
+          animateOnMount={true}>
+          <BottomSheetScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollViewContent}
+            // Important for nested scrolling
+            nestedScrollEnabled={true}>
+            {filteredProperties.map((item) => (
+              <TouchableOpacity
+                key={item.id.toString()}
+                onPress={() =>
+                  router.push({
+                    pathname: `/(details)/[id]`,
+                    params: {
+                      id: item.id,
+                      data: JSON.stringify(item),
+                    },
+                  })
+                }
+                style={styles.propertyCard}>
+                <Image style={styles.image} source={item.image} />
+                <Ionicons
+                  name="heart-outline"
+                  size={24}
+                  color="white"
+                  style={styles.heartIcon}
+                />
+                <View style={styles.propertyInfo}>
+                  <Text style={styles.propertyTitle}>{item.title}</Text>
+                  <Text style={styles.propertyLocation}>{item.location}</Text>
+                  <Text style={styles.propertyPrice}>{item.price}</Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </BottomSheetScrollView>
+        </BottomSheet>
+      </SafeAreaView>
+    </GestureHandlerRootView>
   );
 }
 
 const styles = StyleSheet.create({
   main: {
-    margin: 0,
     flex: 1,
     backgroundColor: "#FFF",
   },
-
-  profileContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  profileImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    marginRight: 10,
-  },
   categoryButtonScrollViewContainer: {
-    display: "flex",
     flexDirection: "row",
-  },
-  labelContainer: {
-    display: "flex",
-  },
-  searchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#1B4F72",
-    borderRadius: 10,
-    marginHorizontal: 20,
-    padding: 10,
-  },
-  searchInput: {
-    flex: 1,
-    color: "white",
-    fontSize: 16,
-  },
-  categoryContainer: {
-    marginVertical: 20,
-    height: 40,
+    paddingHorizontal: 10,
+    marginTop: 10,
+    marginBottom: 5,
   },
   categoryButton: {
-    paddingVertical: 10,
+    paddingVertical: 8,
     paddingHorizontal: 15,
     borderRadius: 20,
+    marginRight: 10,
+    backgroundColor: "#EEE",
   },
   selectedCategory: {
     backgroundColor: "black",
@@ -302,24 +216,22 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
   },
-  imageContainer: {
-    gap: 10,
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 10,
+  scrollViewContent: {
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+    // Important for proper scrolling
+    flexGrow: 1,
   },
   propertyCard: {
-    width: "90%",
     backgroundColor: "#fff",
     borderRadius: 10,
     overflow: "hidden",
     marginBottom: 20,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.8,
+    shadowOpacity: 0.3,
     shadowRadius: 2,
-    elevation: 5,
+    elevation: 3,
   },
   image: {
     width: "100%",

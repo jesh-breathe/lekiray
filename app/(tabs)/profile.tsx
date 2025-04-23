@@ -1,8 +1,8 @@
 import { View, Text, Button } from "react-native";
 import { useAuth, useUser } from "@clerk/clerk-expo";
-import { useClerk } from "@clerk/clerk-expo";
+
 export default function ProfileTab() {
-  const { user, isLoaded, isSignedIn } = useUser();
+  const { user, isSignedIn } = useUser();
   const { signOut } = useAuth();
   console.log(user);
 
@@ -10,6 +10,7 @@ export default function ProfileTab() {
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Text>👤 Profile Tab</Text>
       <Button title="Sign Out" onPress={() => signOut()} />
+      {isSignedIn && <Text>{user?.fullName}</Text>}
     </View>
   );
 }

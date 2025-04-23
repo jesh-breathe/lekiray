@@ -2,29 +2,24 @@ import { PlatformPressable } from "@react-navigation/elements";
 import { useLinkBuilder, useTheme } from "@react-navigation/native";
 import React from "react";
 import { Text, View } from "react-native";
-import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import { FontAwesome6 } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 
 const TabBar = ({ state, descriptors, navigation }) => {
-  const primary = "#FF7700";
+  const primary = "red";
   const grey = "#000";
 
   const icons: Record<
-    "index" | "map" | "wishlist" | "profile",
+    "index" | "wishlist" | "profile",
     (props: any) => JSX.Element
   > = {
     index: (props) => (
-      <Ionicons name="home" size={26} color={grey} {...props} />
-    ),
-    map: (props) => (
-      <FontAwesome5 name="map-marker-alt" size={26} color={grey} {...props} />
+      <Ionicons name="home-outline" size={26} color={grey} {...props} />
     ),
     wishlist: (props) => (
-      <FontAwesome6 name="list" size={26} color={grey} {...props} />
+      <Ionicons name="heart-outline" size={26} color={grey} {...props} />
     ),
     profile: (props) => (
-      <FontAwesome5 name="user-alt" size={26} color={grey} {...props} />
+      <Ionicons name="person-outline" size={26} color={grey} {...props} />
     ),
   };
 
@@ -34,16 +29,16 @@ const TabBar = ({ state, descriptors, navigation }) => {
   return (
     <View
       style={{
+        shadowColor: "grey",
         flexDirection: "row",
         position: "absolute",
         bottom: 0,
         justifyContent: "space-between",
         alignItems: "center",
-        backgroundColor: "#FFF",
-        padding: 5,
+        backgroundColor: "#FBFBFF",
+        padding: 8,
         elevation: 3,
-      }}
-    >
+      }}>
       {state.routes.map(
         (
           route: {
@@ -107,15 +102,14 @@ const TabBar = ({ state, descriptors, navigation }) => {
                 justifyContent: "center",
                 alignItems: "center",
                 gap: 4,
-              }}
-            >
+              }}>
               <IconComponent color={isFocused ? primary : grey} />
               <Text
                 style={{
                   color: isFocused ? primary : colors.text,
-                  fontSize: 12,
-                }}
-              >
+                  fontSize: 14,
+                  fontWeight: 700,
+                }}>
                 {label}
               </Text>
             </PlatformPressable>
