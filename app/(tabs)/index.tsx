@@ -5,69 +5,31 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import MapView from "react-native-maps";
-import { SafeAreaView } from "react-native-safe-area-context";
-import React, { useCallback, useState, useRef } from "react";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+  TextInput,
+} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import MapView from 'react-native-maps';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import React, { useCallback, useState, useRef } from 'react';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import properties from '@/data/item.json';
+import { imageMap } from '@/utils/image';
 
-export const properties = [
-  {
-    id: 1,
-    title: "El Naranjo, Guatemala",
-    location: "Addis Ababa, Ethiopia",
-    category: "guest-house",
-    image: require("@/assets/images/1.jpg"),
-    price: "$484 night",
-  },
-  {
-    id: 2,
-    title: "Ethiopia",
-    location: "Addis Ababa, Ethiopia",
-    category: "hotels",
-    image: require("@/assets/images/2.jpg"),
-    price: "$59.00 night",
-  },
-  {
-    id: 3,
-    title: "Kenya",
-    location: "Addis Ababa, Ethiopia",
-    category: "home-stays",
-    image: require("@/assets/images/3.jpg"),
-    price: "$39.00 night",
-  },
-  {
-    id: 4,
-    title: "Nigeria",
-    location: "Addis Ababa, Ethiopia",
-    category: "renovation",
-    image: require("@/assets/images/4.jpg"),
-    price: "$29.00 night",
-  },
-  {
-    id: 5,
-    title: "South Africa",
-    location: "Addis Ababa, Ethiopia",
-    category: "home-stays",
-    image: require("@/assets/images/5.jpg"),
-    price: "$69.00 night",
-  },
-];
 export default function Index() {
+  const [value, setValue] = useState('');
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [filteredProperties, setFilteredProperties] = useState(properties);
   const router = useRouter();
 
   const handleSheetChanges = useCallback((index: number) => {
-    console.log("handleSheetChanges", index);
+    console.log('handleSheetChanges', index);
   }, []);
 
   const handleCategoryPress = (category: string) => {
-    const isAll = category.toLowerCase() === "all";
+    const isAll = category.toLowerCase() === 'all';
     const isSelected =
       selectedCategory?.toLowerCase() === category.toLowerCase();
 
@@ -84,46 +46,63 @@ export default function Index() {
   };
 
   const categories = [
-    "All",
-    "Home-stays",
-    "Guest-house",
-    "Hotels",
-    "Renovation",
+    { label: 'All', icon: 'search' },
+    { label: 'Home-stays', icon: 'home-outline' },
+    { label: 'Guest-house', icon: 'bed-outline' },
+    { label: 'Hotels', icon: 'business-outline' },
+    { label: 'Renovation', icon: 'construct-outline' },
   ];
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaView style={styles.main}>
-        {/* categories buttons */}
+        <View style={styles.searchFileldContainer}>
+          <TextInput
+            placeholder='Try Kolfe'
+            style={styles.searchField}
+            placeholderTextColor='black'
+            value={value}
+            onChangeText={setValue}
+          />
+          <Ionicons name='search-outline' size={20} color='black' />
+        </View>
+
         <View style={styles.categoryButtonScrollViewContainer}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {categories.map((category) => (
-              <TouchableOpacity
-                key={category}
-                onPress={() => handleCategoryPress(category)}
-                style={[
-                  styles.categoryButton,
-                  (selectedCategory === null && category === "All") ||
-                  selectedCategory?.toLowerCase() === category.toLowerCase()
-                    ? styles.selectedCategory
-                    : null,
-                ]}>
-                <Text
+            {categories.map((category) => {
+              const isSelected =
+                (selectedCategory === null && category.label === 'All') ||
+                selectedCategory?.toLowerCase() ===
+                  category.label.toLowerCase();
+              return (
+                <TouchableOpacity
+                  key={category.label}
+                  onPress={() => handleCategoryPress(category.label)}
                   style={[
-                    styles.categoryText,
-                    (selectedCategory === null && category === "All") ||
-                    selectedCategory?.toLowerCase() === category.toLowerCase()
-                      ? styles.selectedCategoryText
-                      : null,
-                  ]}>
-                  {category}
-                </Text>
-              </TouchableOpacity>
-            ))}
+                    styles.categoryButton,
+                    isSelected ? styles.selectedCategory : null,
+                  ]}
+                >
+                  <Ionicons
+                    name={category.icon as any}
+                    size={24}
+                    color={isSelected ? 'white' : 'black'}
+                    style={{ marginBottom: 5 }}
+                  />
+                  <Text
+                    style={[
+                      styles.categoryText,
+                      isSelected ? styles.selectedCategoryText : null,
+                    ]}
+                  >
+                    {category.label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
           </ScrollView>
         </View>
 
-        {/**Map view */}
         <MapView
           style={{ flex: 1 }}
           initialRegion={{
@@ -135,44 +114,40 @@ export default function Index() {
         />
 
         <BottomSheet
-          topInset={100}
+          topInset={200}
           ref={bottomSheetRef}
           onChange={handleSheetChanges}
-          snapPoints={["25%", "50%", "75%"]}
-          index={1} // Start at middle position
+          snapPoints={['20%', '60%', '80%']}
+          index={3}
           enablePanDownToClose={false}
           enableHandlePanningGesture={true}
           enableContentPanningGesture={true}
           enableOverDrag={true}
           activeOffsetY={[-10, 10]}
-          // Add these props to improve behavior
           overDragResistanceFactor={0}
-          animateOnMount={true}>
+          animateOnMount={true}
+        >
           <BottomSheetScrollView
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.scrollViewContent}
-            // Important for nested scrolling
-            nestedScrollEnabled={true}>
+            nestedScrollEnabled={true}
+          >
             {filteredProperties.map((item) => (
               <TouchableOpacity
                 key={item.id.toString()}
                 onPress={() =>
                   router.push({
-                    pathname: `/(details)/[id]`,
+                    pathname: '/details/[id]',
                     params: {
                       id: item.id,
                       data: JSON.stringify(item),
                     },
                   })
                 }
-                style={styles.propertyCard}>
-                <Image style={styles.image} source={item.image} />
-                <Ionicons
-                  name="heart-outline"
-                  size={24}
-                  color="white"
-                  style={styles.heartIcon}
-                />
+                style={styles.propertyCard}
+              >
+                <Image style={styles.image} source={imageMap[item.image]} />
+
                 <View style={styles.propertyInfo}>
                   <Text style={styles.propertyTitle}>{item.title}</Text>
                   <Text style={styles.propertyLocation}>{item.location}</Text>
@@ -190,10 +165,29 @@ export default function Index() {
 const styles = StyleSheet.create({
   main: {
     flex: 1,
-    backgroundColor: "#FFF",
+    backgroundColor: '#FFF',
+    paddingHorizontal: 4,
+  },
+  searchFileldContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 50,
+    width: '90%',
+    alignSelf: 'center',
+    marginVertical: 10,
+    borderWidth: 1,
+    borderColor: '#c2c2c2',
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    backgroundColor: '#f9f9f9',
+  },
+  searchField: {
+    flex: 1,
+    fontSize: 16,
+    marginRight: 10,
   },
   categoryButtonScrollViewContainer: {
-    flexDirection: "row",
+    flexDirection: 'row',
     paddingHorizontal: 10,
     marginTop: 10,
     marginBottom: 5,
@@ -203,42 +197,44 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     borderRadius: 20,
     marginRight: 10,
-    backgroundColor: "#EEE",
-  },
-  selectedCategory: {
-    backgroundColor: "black",
+    backgroundColor: '#EEE',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   categoryText: {
-    color: "black",
-    fontSize: 16,
+    color: 'black',
+    fontSize: 12,
+    textAlign: 'center',
+  },
+  selectedCategory: {
+    backgroundColor: 'black',
   },
   selectedCategoryText: {
-    color: "white",
-    fontWeight: "bold",
+    color: 'white',
+    fontWeight: 'bold',
   },
   scrollViewContent: {
     paddingHorizontal: 20,
     paddingBottom: 20,
-    // Important for proper scrolling
     flexGrow: 1,
   },
   propertyCard: {
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
     borderRadius: 10,
-    overflow: "hidden",
+    overflow: 'hidden',
     marginBottom: 20,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 2,
     elevation: 3,
   },
   image: {
-    width: "100%",
+    width: '100%',
     height: 200,
   },
   heartIcon: {
-    position: "absolute",
+    position: 'absolute',
     top: 10,
     right: 10,
     zIndex: 1,
@@ -248,15 +244,15 @@ const styles = StyleSheet.create({
   },
   propertyTitle: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   propertyLocation: {
     fontSize: 14,
-    color: "#757575",
+    color: '#757575',
   },
   propertyPrice: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginTop: 5,
   },
 });

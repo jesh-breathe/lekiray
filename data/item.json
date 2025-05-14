@@ -1,0 +1,43 @@
+ [
+      {
+        "id": 1,
+        "title": "El Naranjo, Guatemala",
+        "location": "Addis Ababa, Ethiopia",
+        "category": "guest-house",
+        "image": "1.jpg",
+        "price": "$484 night"
+      },
+      {
+        "id": 2,
+        "title": "Ethiopia",
+        "location": "Addis Ababa, Ethiopia",
+        "category": "hotels",
+        "image": "2.jpg",
+        "price": "$59.00 night"
+      },
+      {
+        "id": 3,
+        "title": "Kenya",
+        "location": "Addis Ababa, Ethiopia",
+        "category": "home-stays",
+        "image": "3.jpg",
+        "price": "$39.00 night"
+      },
+      {
+        "id": 4,
+        "title": "Nigeria",
+        "location": "Addis Ababa, Ethiopia",
+        "category": "renovation",
+        "image": "4.jpg",
+        "price": "$29.00 night"
+      },
+      {
+        "id": 5,
+        "title": "South Africa",
+        "location": "Addis Ababa, Ethiopia",
+        "category": "home-stays",
+        "image": "5.jpg",
+        "price": "$69.00 night"
+      }
+    ]
+ 

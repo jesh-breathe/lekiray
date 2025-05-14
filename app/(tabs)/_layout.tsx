@@ -5,14 +5,22 @@ import { ActivityIndicator, View } from "react-native";
 
 export default function TabsLayout() {
   const { isLoaded, isSignedIn } = useAuth();
-  if (!isLoaded) return;
-  <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-    <ActivityIndicator />
-  </View>;
+
+  // Show loading indicator if not loaded
+  if (!isLoaded) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
+  // Redirect if not signed in
   if (!isSignedIn) {
     return <Redirect href="/sign-in" />;
   }
 
+  // Render tabs if signed in
   return (
     <Tabs tabBar={(props) => <TabBar {...props} />}>
       <Tabs.Screen
